@@ -8,7 +8,7 @@ class DBManager:
         )
         self.cur = self.conn.cursor()
 
-    def get_companies_and_vacancies_count(self):
+    def get_companies_and_vacancies_count(self) -> list:
         """Получает список всех компаний и количество вакансий у каждой компании"""
         self.cur.execute(
             """select c.company_name, count(v.vacancy_id) from companies as c
@@ -17,7 +17,7 @@ class DBManager:
         )
         return self.cur.fetchall()
 
-    def get_all_vacancies(self):
+    def get_all_vacancies(self) -> list:
         """Получает список всех вакансий с указанием названия компании,
         названия вакансии и зарплаты и ссылки на вакансию"""
         self.cur.execute(
@@ -26,12 +26,12 @@ class DBManager:
         )
         return self.cur.fetchall()
 
-    def get_avg_salary(self):
+    def get_avg_salary(self) -> list:
         """Получает среднюю зарплату по вакансиям"""
         self.cur.execute("""select avg(salary) from vacancies""")
         return self.cur.fetchall()
 
-    def get_vacancies_with_higher_salary(self):
+    def get_vacancies_with_higher_salary(self) -> list:
         """Получает список всех вакансий, у которых зарплата выше средней по всем вакансиям"""
         self.cur.execute(
             """select * from vacancies
@@ -39,7 +39,7 @@ class DBManager:
         )
         return self.cur.fetchall()
 
-    def get_vacancies_with_keyword(self, keyword):
+    def get_vacancies_with_keyword(self, keyword: str) -> list:
         """Получает список всех вакансий, в названии которых содержатся переданные в метод слова"""
         self.cur.execute(
             """select * from vacancies

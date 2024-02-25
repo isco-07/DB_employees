@@ -6,7 +6,7 @@ import requests
 
 from src.config import config
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     db_filename = os.path.join(os.path.dirname(__file__), "../database.ini")
     db_params = config(db_filename, "postgresql")
@@ -70,37 +70,43 @@ if __name__ == '__main__':
             )
     with conn.cursor() as cur:
         for company in companies:
-            cur.execute(
-                """
-            INSERT INTO companies (company_id, company_name)
-            VALUES (%s, %s)
-        """,
-                (company["company_id"], company["company_name"]),
-            )
+            try:
+                cur.execute(
+                    """
+                INSERT INTO companies (company_id, company_name)
+                VALUES (%s, %s)
+            """,
+                    (company["company_id"], company["company_name"]),
+                )
+            except psycopg2.Error:
+                continue
         for vacancy in vacancies:
-            cur.execute(
-                """
-            INSERT INTO vacancies (vacancy_id, company_id, vacancy_name, experience, url, salary)
-            VALUES (%s, %s, %s, %s, %s, %s)
-        """,
-                (
-                    vacancy["vacancy_id"],
-                    vacancy["company_id"],
-                    vacancy["vacancy_name"],
-                    vacancy["experience"],
-                    vacancy["url"],
-                    vacancy["salary"],
-                ),
-            )
+            try:
+                cur.execute(
+                    """
+                INSERT INTO vacancies (vacancy_id, company_id, vacancy_name, experience, url, salary)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+                    (
+                        vacancy["vacancy_id"],
+                        vacancy["company_id"],
+                        vacancy["vacancy_name"],
+                        vacancy["experience"],
+                        vacancy["url"],
+                        vacancy["salary"],
+                    ),
+                )
+            except psycopg2.Error:
+                continue
 
     conn.commit()
     cur.close()
     conn.close()
 
     requester = DBManager()
-    requester.get_companies_and_vacancies_count()
-    requester.get_all_vacancies()
-    requester.get_avg_salary()
-    requester.get_vacancies_with_higher_salary()
+    print(requester.get_companies_and_vacancies_count())
+    print(requester.get_all_vacancies())
+    print(requester.get_avg_salary())
+    print(requester.get_vacancies_with_higher_salary())
     keyword = input()
-    requester.get_vacancies_with_keyword(keyword)
+    print(requester.get_vacancies_with_keyword(keyword))
